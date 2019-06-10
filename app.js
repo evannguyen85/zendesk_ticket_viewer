@@ -7,7 +7,7 @@ app.use(express.static(__dirname + '/public'));
 
 // index route
 app.get('/results', (req, res) => {
-    // const url = 'https://evannguyen.zendesk.com/api/v2/tickets/show_many.json?ids=2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21';
+    // const url = 'https://evannguyen.zendesk.com/api/v2/tickets/show_many.json?ids=2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27';
     const url = 'https://evannguyen.zendesk.com/api/v2/tickets.json';
     request.get(url, {
         'auth': {
@@ -22,14 +22,14 @@ app.get('/results', (req, res) => {
         } else {
             const tickets = JSON.parse(body);
             // list of tickets. need to split
-            console.log(tickets['tickets']);
+            // console.log(tickets['tickets']);
+            let myTickets = tickets['tickets'];
 
             //set default variables
-            var totalTickets = 100,
+            let totalTickets = myTickets.length,
                 pageSize = 25,
-                pageCount = 100 / 25,
+                pageCount = Math.ceil(totalTickets / pageSize),
                 currentPage = 1,
-                myTickets = tickets['tickets'],
                 ticketsArrays = [],
                 ticketsList = [];
 
@@ -45,11 +45,9 @@ app.get('/results', (req, res) => {
 
             //show list of tickets from group
             ticketsList = ticketsArrays[+currentPage - 1];
-            // console.log(ticketsList);
-            // console.log(pageCount, currentPage, totalTickets, pageSize);
+            console.log(pageCount, currentPage, myTickets.length, pageSize);
 
-            //render index.ejs view file
-
+            //render results.ejs view file
             res.render('results', {
                 tickets: ticketsList,
                 pageSize: pageSize,
