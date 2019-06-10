@@ -1,0 +1,15 @@
+body {
+    font-family: 'Material Icons', sans-serif;
+}
+.pagination {
+    list-style: none;
+}
+
+.pagination li {
+    display: inline;
+}
+
+.disabled {
+    pointer-events: none;
+    cursor: default;
+}
