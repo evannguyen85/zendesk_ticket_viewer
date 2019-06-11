@@ -1,6 +1,5 @@
 # zendesk_ticket_viewer
 #1. Description: The app is to respond to internship code challenge: Zendesk Ticket Viewer with following requirements:
-- hh
   + Connect to the Zendesk API
   + Request the tickets for your account, page through tickets when more than 25 are returned
   + Display them in a list
