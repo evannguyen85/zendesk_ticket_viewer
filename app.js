@@ -6,9 +6,66 @@ app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 
 // index route
-app.get('/results', (req, res) => {
-    // const url = 'https://evannguyen.zendesk.com/api/v2/tickets/show_many.json?ids=2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27';
+app.get('/tickets', (req, res) => {
     const url = 'https://evannguyen.zendesk.com/api/v2/tickets.json';
+    requestTickets(url, (authenError, err, statusCode) => {
+        res.render('error', {
+            authenError: authenError,
+            err: err,
+            statusCode: statusCode
+        });
+    }, (returnedData) => {
+        let tickets = returnedData['tickets'];
+        //set default variables
+        let totalTickets = tickets.length,
+            pageSize = 25,
+            pageCount = Math.ceil(totalTickets / pageSize),
+            currentPage = 1,
+            ticketsArrays = [],
+            ticketsList = [];
+
+        //split list into groups
+        while (tickets.length > 0) {
+            ticketsArrays.push(tickets.splice(0, pageSize));
+        }
+
+        //set current page if specifed as get variable (eg: /?page=2)
+        if (typeof req.query.page !== 'undefined') {
+            currentPage = +req.query.page;
+        }
+
+        //show list of tickets from group
+        ticketsList = ticketsArrays[+currentPage - 1];
+
+        //render tickets.ejs view file
+        res.render('tickets', {
+            tickets: ticketsList,
+            pageSize: pageSize,
+            totalTickets: totalTickets,
+            pageCount: pageCount,
+            currentPage: currentPage
+        });
+    });
+});
+
+// show route
+app.get('/tickets/:id', (req, res) => {
+    const ticketId = req.params.id;
+    const url = 'https://evannguyen.zendesk.com/api/v2/tickets/' + ticketId + '.json';
+
+    requestTickets(url, (authenError, err, statusCode) => {
+        res.render('error', {
+            authenError: authenError,
+            err: err,
+            statusCode: statusCode
+        });
+    }, (returnedData) => {
+        const ticket = returnedData;
+        res.render('show', { ticket: ticket });
+    });
+});
+
+function requestTickets(url, handleErrors, handleTickets) {
     request.get(url, {
         'auth': {
             'user': 'evannguyen85@gmail.com',
@@ -18,73 +75,12 @@ app.get('/results', (req, res) => {
     }, (err, response, body) => {
         const returnedData = JSON.parse(body);
         if (err || response.statusCode !== 200) {
-            res.render('error', {
-                authenError: returnedData.error,
-                err: err,
-                statusCode: response.statusCode
-            });
+            handleErrors(returnedData.error, err, response.statusCode);
         } else {
-            // list of tickets. need to split
-            // console.log(tickets['tickets']);
-            let tickets = returnedData['tickets'];
-
-            //set default variables
-            let totalTickets = tickets.length,
-                pageSize = 25,
-                pageCount = Math.ceil(totalTickets / pageSize),
-                currentPage = 1,
-                ticketsArrays = [],
-                ticketsList = [];
-
-            //split list into groups
-            while (tickets.length > 0) {
-                ticketsArrays.push(tickets.splice(0, pageSize));
-            }
-
-            //set current page if specifed as get variable (eg: /?page=2)
-            if (typeof req.query.page !== 'undefined') {
-                currentPage = +req.query.page; //try to convert into number. eg. +3 returns 3
-            }
-
-            //show list of tickets from group
-            ticketsList = ticketsArrays[+currentPage - 1];
-
-            //render results.ejs view file
-            res.render('results', {
-                tickets: ticketsList,
-                pageSize: pageSize,
-                totalTickets: totalTickets,
-                pageCount: pageCount,
-                currentPage: currentPage
-            });
+            handleTickets(returnedData);
         }
     });
-});
-
-// show route
-app.get('/results/:id', (req, res) => {
-    // find the ticket
-    const id = req.params.id;
-    console.log(id);
-    const url = 'https://evannguyen.zendesk.com/api/v2/tickets/' + id + '.json';
-    request.get(url, {
-        'auth': {
-            'user': 'evannguyen85@gmail.com',
-            'pass': 'evan@zendesk08',
-            'sendImmediately': false
-        }
-    }, (err, response, body) => {
-        if (err || response.statusCode !== 200) {
-            console.log('something went wrong');
-            console.log(err);
-        } else {
-            const ticket = JSON.parse(body);
-            // console.log(tickets['tickets']);
-            // render show template with that ticket
-            res.render('show', { ticket: ticket });
-        }
-    });
-});
+}
 
 app.listen(3000, () => {
     console.log('Zendesk ticket viewer app has started');

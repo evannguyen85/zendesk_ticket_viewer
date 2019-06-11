@@ -1,9 +1,34 @@
 <% include ./partials/header %>
     <h1>list of tickets</h1>
+    <p>
+        <span><%= totalTickets %> total tickets, </span>
+        <span><%= tickets.length %> on this page.</span>
+    </p>
+    <table>
+        <thead>
+            <td>id</td>
+            <td>ticket status</td>
+            <td>subject</td>
+            <td>opened by</td>
+            <td>created at</td>
+        </thead>
+        <tbody>
+            <% tickets.forEach(function(ticket) { %>
+                <tr>
+                    <td><%= ticket['id'] %></td>
+                    <td><%= ticket['status'] %></td>
+                    <td><%= ticket['subject'] %></td>
+                    <td><%= ticket['submitter_id'] %></td>
+                    <td><%= ticket['created_at'] %></td>
+                    <td><a href="/tickets/<%= ticket['id'] %>">details</a></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
     <% if (pageCount > 1) { %>
         <ul class="pagination">
             <% if (currentPage > 1) { %>
-                <li><a href="/results/?page=1">&laquo; </a> </li>
+                <li><a href="/tickets/?page=1">&laquo; </a> </li>
             <% } %>
 
             <% var i = 1; %>
@@ -21,7 +46,7 @@
                     <li class="active"><span>
                         <%= i %> <span class="sr-only">(current)</span></span></li>
                 <%} else { %>
-                    <li><a href="/results/?page=<%= i %>"><%= i %></a></li>
+                    <li><a href="/tickets/?page=<%= i %>"><%= i %></a></li>
                 <% } %>
 
                 <% if (i == (+currentPage + 4)) { %>
@@ -31,29 +56,8 @@
             <% } %>
 
             <% if (currentPage != pageCount) { %>
-                <li><a href="/results/?page=<%=pageCount %>">&raquo;</a></li>
+                <li><a href="/tickets/?page=<%=pageCount %>">&raquo;</a></li>
             <% } %>
         </ul>
         <% } %>
-    <table>
-        <thead>
-            <td>id</td>
-            <td>ticket status</td>
-            <td>subject</td>
-            <td>opened by</td>
-            <td>created at</td>
-        </thead>
-        <tbody>
-            <% tickets.forEach(function(ticket) { %>
-                <tr>
-                    <td><%= ticket['id'] %></td>
-                    <td><%= ticket['status'] %></td>
-                    <td><%= ticket['subject'] %></td>
-                    <td><%= ticket['submitter_id'] %></td>
-                    <td><%= ticket['created_at'] %></td>
-                    <td><a href="/results/<%= ticket['id'] %>">details</a></td>
-                </tr>
-            <% }) %>
-        </tbody>
-    </table>
 <% include ./partials/footer %>
