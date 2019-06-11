@@ -1,11 +1,14 @@
-const express = require('express'),
-    app = express(),
-    request = require('request');
+const   express = require('express'),
+        app = express(),
+        requestTickets = require('./modules/ticket');
 
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 
 // index route
+app.get('/', (req, res) => {
+    res.redirect('/tickets');
+});
 app.get('/tickets', (req, res) => {
     const url = 'https://evannguyen.zendesk.com/api/v2/tickets.json';
     requestTickets(url, (authenError, err, statusCode) => {
@@ -64,23 +67,6 @@ app.get('/tickets/:id', (req, res) => {
         res.render('show', { ticket: ticket });
     });
 });
-
-function requestTickets(url, handleErrors, handleTickets) {
-    request.get(url, {
-        'auth': {
-            'user': 'evannguyen85@gmail.com',
-            'pass': 'evan@zendesk08',
-            'sendImmediately': false
-        }
-    }, (err, response, body) => {
-        const returnedData = JSON.parse(body);
-        if (err || response.statusCode !== 200) {
-            handleErrors(returnedData.error, err, response.statusCode);
-        } else {
-            handleTickets(returnedData);
-        }
-    });
-}
 
 app.listen(3000, () => {
     console.log('Zendesk ticket viewer app has started');
