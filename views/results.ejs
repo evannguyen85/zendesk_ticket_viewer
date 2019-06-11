@@ -1,15 +1,5 @@
 <% include ./partials/header %>
     <h1>list of tickets</h1>
-    <ul class="list-group">
-        <% tickets.forEach(function(ticket) { %>
-        <li class="list-group-item"><a href="/results/<%= ticket['id'] %>">
-            <%= ticket['id'] %>
-            <%= ticket['status'] %>
-            <%= ticket['subject'] %>
-        </a></li>
-        <% }) %>
-    </ul>
-
     <% if (pageCount > 1) { %>
         <ul class="pagination">
             <% if (currentPage > 1) { %>
@@ -45,4 +35,25 @@
             <% } %>
         </ul>
         <% } %>
+    <table>
+        <thead>
+            <td>id</td>
+            <td>ticket status</td>
+            <td>subject</td>
+            <td>opened by</td>
+            <td>created at</td>
+        </thead>
+        <tbody>
+            <% tickets.forEach(function(ticket) { %>
+                <tr>
+                    <td><%= ticket['id'] %></td>
+                    <td><%= ticket['status'] %></td>
+                    <td><%= ticket['subject'] %></td>
+                    <td><%= ticket['submitter_id'] %></td>
+                    <td><%= ticket['created_at'] %></td>
+                    <td><a href="/results/<%= ticket['id'] %>">details</a></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
 <% include ./partials/footer %>

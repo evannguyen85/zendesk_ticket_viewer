@@ -1,0 +1,15 @@
+<% include ./partials/header %>
+<h1>Opps, something went wrong</h1>
+<% if(authenError) { %>
+    <p>Error returned from server: <%= authenError %></p>
+<% } %>
+
+<% if(statusCode) { %>
+    <p>Status Code: <%= statusCode %></p>
+<% } %>
+
+<% if(err) { %>
+    <p>Generic Error: <%= err %></p>
+<% } %>
+
+<% include ./partials/footer %>

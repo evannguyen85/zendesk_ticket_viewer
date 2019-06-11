@@ -13,3 +13,23 @@ body {
     pointer-events: none;
     cursor: default;
 }
+
+table {
+    border-collapse: collapse;
+  }
+
+  table, th, td {
+    border: 1px solid black;
+  }
+
+  th, td {
+    text-align: left;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  th {
+    height: 100px;
+  }

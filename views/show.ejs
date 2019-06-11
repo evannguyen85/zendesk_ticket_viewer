@@ -1,8 +1,20 @@
 <% include ./partials/header %>
 
-<h1>This is the show template</h1>
-<%= ticket['ticket']['id'] %>
-<%= ticket['ticket']['subject'] %>
+<h1>Ticket Details</h1>
+<p>Requestor: <%= ticket['ticket']['requester_id'] %></p>
+<p>Created at: <%= ticket['ticket']['created_at'] %></p>
+<p>Status: <%= ticket['ticket']['status'] %></p>
+<p>Priority:
+    <% if(ticket['ticket']['priority']) { %>
+        <span><%= ticket['ticket']['priority']%></span>
+    <% } else { %>
+        <span>N/A</span>
+    <% }%>
+</p>
+<p>Assigned to: <%= ticket['ticket']['assignee_id'] %></p>
+<br>
+<p><strong>Subject: </strong><%= ticket['ticket']['subject'] %></p>
+<p><strong>Description: </strong><%= ticket['ticket']['description'] %></p>
 <div>
     <a href="/results">Back to all tickets</a>
 </div>

@@ -16,17 +16,20 @@ app.get('/results', (req, res) => {
             'sendImmediately': false
         }
     }, (err, response, body) => {
+        const returnedData = JSON.parse(body);
         if (err || response.statusCode !== 200) {
-            console.log('something went wrong');
-            console.log(err);
+            res.render('error', {
+                authenError: returnedData.error,
+                err: err,
+                statusCode: response.statusCode
+            });
         } else {
-            const tickets = JSON.parse(body);
             // list of tickets. need to split
             // console.log(tickets['tickets']);
-            let myTickets = tickets['tickets'];
+            let tickets = returnedData['tickets'];
 
             //set default variables
-            let totalTickets = myTickets.length,
+            let totalTickets = tickets.length,
                 pageSize = 25,
                 pageCount = Math.ceil(totalTickets / pageSize),
                 currentPage = 1,
@@ -34,8 +37,8 @@ app.get('/results', (req, res) => {
                 ticketsList = [];
 
             //split list into groups
-            while (myTickets.length > 0) {
-                ticketsArrays.push(myTickets.splice(0, pageSize));
+            while (tickets.length > 0) {
+                ticketsArrays.push(tickets.splice(0, pageSize));
             }
 
             //set current page if specifed as get variable (eg: /?page=2)
@@ -45,7 +48,6 @@ app.get('/results', (req, res) => {
 
             //show list of tickets from group
             ticketsList = ticketsArrays[+currentPage - 1];
-            console.log(pageCount, currentPage, myTickets.length, pageSize);
 
             //render results.ejs view file
             res.render('results', {
